@@ -14,13 +14,22 @@
   <div class="row" id="header">
     <div class="column grid_14">
       <%= navigation :admin %>
+      <%if administrator_signed_in?%>
+        <%=current_administrator.name%> is logged in. <%= link_to 'Sign Out', destroy_administrator_session_path, :method=>'delete'%>
+      <%end%>
+    <p class="notice"><%= notice %></p>
+    <p class="alert"><%= alert %></p>
     </div>
   </div>
   <div class="row" id="content">
     <div class="column grid_14">
-     <% tabnav :admin do %>
-         <%= yield %>
-     <% end %>
+      <%if administrator_signed_in?%>
+	  	<% tabnav :admin do %>
+	      <%= yield %>
+	  	<% end %>
+	  <% else %>
+	    <%=yield%>
+	  <% end %>
     </div>
   </div>
   <div id="clear"></div>

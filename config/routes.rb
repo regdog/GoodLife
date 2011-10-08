@@ -17,10 +17,12 @@ GoodLife::Application.routes.draw do
   
   match '/user' => "feats#index", :as => :user_root
   match 'feats/checkins/:feat_id' => 'feats#checkin'
-
+  
+  devise_for :administrators, :path=>:admin, :module=>:admin
+  
   namespace :admin do
        # Directs /admin/products/* to Admin::ProductsController
-       # (app/controllers/admin/products_controller.rb)
+       # (app/controllers/admin/products_controller.rb)  
     resources :content_nodes
     resources :feats
     resources :rewards
@@ -31,7 +33,7 @@ GoodLife::Application.routes.draw do
     get 'partners/list'
     get 'tags/list'
     get 'content_nodes/list'
-    match 'admin/checkins' => 'checkins#index'
+    match 'checkins' => 'checkins#index'
 
     root :to => "dashboard#index"
   end

@@ -10,7 +10,27 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110917050009) do
+ActiveRecord::Schema.define(:version => 20110929074807) do
+
+  create_table "administrators", :force => true do |t|
+    t.string   "email",                                 :default => "", :null => false
+    t.string   "encrypted_password",     :limit => 128, :default => "", :null => false
+    t.string   "name",                                                  :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.integer  "sign_in_count",                         :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.datetime "remember_created_at"
+  end
+
+  add_index "administrators", ["email"], :name => "index_administrators_on_email", :unique => true
+  add_index "administrators", ["name"], :name => "index_administrators_on_name", :unique => true
+  add_index "administrators", ["reset_password_token"], :name => "index_administrators_on_reset_password_token", :unique => true
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -21,10 +41,10 @@ ActiveRecord::Schema.define(:version => 20110917050009) do
   end
 
   create_table "challenges", :force => true do |t|
-    t.string   "name",        :null => false
-    t.text     "description", :null => false
+    t.string   "name",                       :null => false
+    t.text     "description",                :null => false
     t.integer  "bonus_point"
-    t.integer  "done_count"
+    t.integer  "done_count",  :default => 0
     t.datetime "start_on"
     t.datetime "end_on"
     t.datetime "created_at"
@@ -55,7 +75,7 @@ ActiveRecord::Schema.define(:version => 20110917050009) do
   end
 
   create_table "comments", :force => true do |t|
-    t.integer  "checkin_id"
+    t.integer  "checkins_id"
     t.integer  "user_id"
     t.text     "content"
     t.string   "user_ip"
@@ -64,18 +84,16 @@ ActiveRecord::Schema.define(:version => 20110917050009) do
   end
 
   create_table "content_nodes", :force => true do |t|
-    t.integer  "user_id"
-    t.string   "permalink",  :limit => 100, :default => "", :null => false
+    t.string   "name",       :limit => 100, :default => "", :null => false
     t.string   "title",      :limit => 100, :default => "", :null => false
     t.text     "content",                                   :null => false
-    t.datetime "display_on"
+    t.datetime "display_on",                                :null => false
     t.string   "type",       :limit => 50,                  :null => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "content_nodes", ["id", "type"], :name => "index_on_content_nodes", :unique => true
-  add_index "content_nodes", ["permalink"], :name => "index_on_permalink", :unique => true
+  add_index "content_nodes", ["type", "id"], :name => "type"
 
   create_table "feats", :force => true do |t|
     t.string   "title",          :limit => 20,                :null => false
@@ -105,13 +123,13 @@ ActiveRecord::Schema.define(:version => 20110917050009) do
     t.string   "country"
     t.string   "region"
     t.string   "city"
-    t.string   "street"
     t.string   "zip"
     t.float    "latitude"
     t.float    "longitude"
     t.string   "type"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "street"
   end
 
   create_table "relationships", :force => true do |t|
@@ -125,14 +143,14 @@ ActiveRecord::Schema.define(:version => 20110917050009) do
   end
 
   create_table "rewards", :force => true do |t|
-    t.string   "name",                      :null => false
+    t.string   "name",                                                      :null => false
     t.text     "description"
     t.integer  "redeem_point"
-    t.float    "save_money",   :limit => 8
-    t.integer  "redeem_count"
-    t.integer  "partner_id"
+    t.decimal  "save_money",   :precision => 8, :scale => 2
+    t.integer  "redeem_count",                               :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "partner_id"
   end
 
   create_table "sessions", :force => true do |t|
@@ -173,10 +191,12 @@ ActiveRecord::Schema.define(:version => 20110917050009) do
     t.string   "type"
   end
 
+  add_index "uploads", ["attachable_id", "attachable_type"], :name => "index_uploads_on_attachable_id_and_attachable_type"
+
   create_table "users", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
     t.string   "encrypted_password",     :limit => 128, :default => ""
-    t.string   "name",                                  :default => ""
+    t.string   "name"
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"

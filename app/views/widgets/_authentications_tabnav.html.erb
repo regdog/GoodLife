@@ -25,6 +25,19 @@ render_tabnav :authentications,
   #  end
   #end
 
+  add_tab do |t|
+    t.named 'User Profile'
+    t.titled 'User Profile'
+    t.links_to profile_path
+  end
+
+  add_tab do |t|
+  	t.named 'Authentications'
+    t.titled 'Authentications'
+    t.links_to authentications_path
+    t.highlights_on :controller=>'authentications'
+  end
+
   #add_tab do |t|
   #  t.named 'Home'
   #  t.titled 'Home Page'

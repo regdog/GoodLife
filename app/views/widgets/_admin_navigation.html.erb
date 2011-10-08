@@ -12,11 +12,11 @@ render_navigation :admin, :generate_css => true do
       i.links_to root_path
     end
 
-    add_item do |i|
-      i.named 'Logout'
-      # i.titled 'contribute to the wiki!'
-      i.links_to root_path
-    end
+    # add_item do |i|
+    #   i.named 'Logout'
+    #   # i.titled 'contribute to the wiki!'
+    #   i.links_to destroy_admin_administrator_session_path(:method=>'delete')
+    # end
     
     # you can pass add_item a block to just like the tabnav!
     #  
