@@ -21,7 +21,9 @@ class ApplicationController < ActionController::Base
   
   def load_corp_pages
     category = Category.find_by_name("Page")
-    @pages = category.contents
+    unless category.nil?
+      @pages = category.contents
+    end
   end
   
   private
