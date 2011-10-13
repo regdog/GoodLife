@@ -1,19 +1,16 @@
 class Admin::FeatsController < Admin::BaseController
-  def index
-    list
-    render :action => 'list'
-  end
+  respond_to :json, :only => :feat_tokens
 
-  def list
+  def index
     @search = Feat.search(params[:search])
     if params[:type]
       @view_by = params[:type]
-      @category = FeatCategory.find_by_name(params[:type])
+      @category = Category.feats.find_by_name(params[:type])
       if @category
-        @feats = @category.feats
+        @feats = @category.feats.page(params[:page]).per(8)
       end
     else
-      @feats = Feat.all
+      @feats = Feat.order(:name).page(params[:page]).per(8)
     end
   end
 
@@ -51,5 +48,11 @@ class Admin::FeatsController < Admin::BaseController
     @feat = Feat.find(params[:id])
     @feat.destroy
     redirect_to admin_feats_path
+  end
+
+  def feat_tokens
+    @feats = Feat.where("name like ?", "%#{params[:q]}%").order(:name)
+    ActiveRecord::Base.include_root_in_json = false
+    respond_with(@feats.to_json(:only=>[:id, :name]))
   end
 end

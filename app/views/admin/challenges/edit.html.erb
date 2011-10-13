@@ -1,0 +1,19 @@
+<div class="row">
+  <div class="column grid_10">
+    <h1>Edit Challenge</h1>
+    <p><a href="/admin/challenges">&laquo; Back to Challenge List</a></p>
+    <%= semantic_form_for @challenge, :url => {:action => "update"}, :html => { :multipart => true } do |f| %>
+      <%= f.inputs do %>
+        <%= f.input :name %>
+        <%= f.input :description %>
+        <%#= f.input :feat_tokens, "data-pre" => @challenge.feats.map(&:attributes).to_json %>
+        <%= f.label "Feats" %>
+        <%= f.text_field :feat_tokens, "data-pre" => @challenge.feats.map(&:attributes).to_json %>
+        <%= f.input :start_on %>
+        <%= f.input :end_on %>
+        <%= f.input :bonus_points %>
+      <% end %>
+      <%= f.buttons :commit %>
+    <% end %>
+  </div>
+</div>
