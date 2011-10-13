@@ -1,15 +1,27 @@
 GoodLife::Application.routes.draw do
+  get "plans/index"
+
+  get "plans/all"
+
+  get "plans/daily"
+
+  get "plans/weekly"
+
+  get "plans/weekend"
+
   root :to => "welcome#index"
 
-  devise_for :user, :controllers => {:omniauth_callbacks=>'user/omniauth_callbacks'} do
+  devise_for :users, :controllers => {:omniauth_callbacks=>'users/omniauth_callbacks'} do
     get 'profile', :to => "devise/registrations#edit", :as=>'profile'
   end
  
   match '/user' => "feats#index", :as => :user_root
  
-  devise_for :administrators, :path=>:admin, :module=>:admin
-  
+  #devise_for :administrators, :path=>:admin, :module=>:admin
+
   resources :authentications
+
+  devise_for :admin_users
 
   resources :feats, :only => [:index, :show] do
     get 'checkin', :on => :member
@@ -22,13 +34,14 @@ GoodLife::Application.routes.draw do
 
   resources :checkins, :only => [:index] do
     collection do
-      get 'my_challenges'
-      get 'all'
+      get 'latest'
+      get 'epic'
     end
   end
 
   match 'corp/:permalink' => 'contents#show'
   get 'search/index', :as => :search
+
   get 'kindeditor/images_list'
   post 'kindeditor/upload'
 

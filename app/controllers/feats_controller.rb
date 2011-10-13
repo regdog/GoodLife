@@ -1,7 +1,7 @@
 class FeatsController < ApplicationController
   def index
     if params[:type]
-      @category = Category.feats.find_by_name(params[:type]) if params[:type]
+      @category = Category.feat_category.find_by_name(params[:type]) if params[:type]
       if @category
         @feats = @category.feats
       end
@@ -21,15 +21,9 @@ class FeatsController < ApplicationController
   end
 
   def checkin
-    unless params[:feat_id].blank?
-      @checkin = Checkin.new
-      @checkin.feat_id = params[:feat_id]
-      @checkin.user_id = current_user.id
-      if @checkin.save
-        @feat = @checkin.feat
-        @feat.done_count = @feat.done_count + 1
-        @feat.save
-      end
+    feat = Feat.find(params[:id])
+    if current_user
+      current_user.checkin(feat)
     end
     redirect_to :back
   end

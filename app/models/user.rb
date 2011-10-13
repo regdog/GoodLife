@@ -13,37 +13,195 @@ class User < ActiveRecord::Base
   attr_accessible :email, :name, :password, :password_confirmation, :remember_me
   validates_presence_of :name, :if => :name_required?
   validates_uniqueness_of :name
-  
+
+  # my authentications
   has_many :authentications, :dependent => :destroy
-  has_many :todos
-  has_many :checkins
-  has_many :wishes
-  has_many :redemptions
-  has_many :challenges, :as => :creator
+  # my planned feats
+  has_many :planned_todos
+  has_many :planned_feats, :through => :planned_todos, :source => :feat
+  # my challenges
   has_many :accepted_challenges
+  has_many :challenges, :through => :accepted_challenges
+  # my checkins
+  has_many :checkins
+  # my reward wishlist
+  has_many :user_wishes
+  has_many :wishes, :through => :user_wishes, :source => :reward
+  # my redemptions
+  has_many :redemptions
 
-
-  # all other people checkins with same feats of my challenges
-  def others_checkins_with_same_feats_of_my_challenges
-    challenge_ids = self.challenges.map{|x|x.id}.flatten
-    Checkin.all_for_challenges(challenge_ids).uniq.delete_if{|x| x.user_id == self.id}
+  # feats I'v done
+  def feats_done
+    feats ||= []
+    checkins = Checkin.find(:all,
+                :conditions => ["checkins.user_id = #{self.id}"],
+                :group => 'checkins.user_id, checkins.feat_id')
+    checkins.each do |checkin|
+      feats << checkin.feat
+    end
+    return feats
   end
 
-  # all my challenges contains the feat
-  def challenges_by_feat(feat)
-    self.challenges.delete_if{|x| not feat.challenges.include?(x)}
+  # checkin a feat
+  def checkin(feat)
+    User.transaction do
+      checkin = Checkin.new(:user_id => self.id, :feat_id => feat.id)
+      challenge_ids ||= []
+      self.uncompleted_challenges.each do |challenge|
+        if challenge.uncompleted_feats(self).include?(feat)
+          challenge_ids << challenge.id
+        end
+      end
+      checkin.challenge_ids = challenge_ids
+      checkin.save
+      self.checkins << checkin
+      self.save
+      feat.add_counts
+    end
   end
 
-  # accept a challenge
+  # team checkins
+  def team_checkins
+    checkins ||= []
+    member_ids ||= []
+    self.members.each do |member|
+      member_ids << member.id
+    end
+    checkins = Checkin.where("user_id in ?", member_ids)
+  end
+
+  # user's latest checkins
+  def latest_checkins
+    self.checkins.latest
+  end
+
+  # user's epic checkins
+  def epic_checkins
+    self.checkins.epic
+  end
+
+  # planned feats: daily, weekly, weekend
+  def daily_feats
+    feats ||= []
+    PlannedTodo.daily(self).each do |plan|
+      feats << plan.feat
+    end
+    return feats
+  end
+
+  def weekly_feats
+    feats ||= []
+    PlannedTodo.weekly(self).each do |plan|
+      feats << plan.feat
+    end
+  end
+
+  def weekend_feats
+    feats ||= []
+    PlannedTodo.weekend(self).each do |plan|
+      feats << plan.feat
+    end
+  end
+
+  # accept a challenges
   def accept_challenge(challenge)
-    self.challenges << challenge
-    self.save
+    User.transaction do
+      if self.challenges.include?(challenge)
+        return nil
+      elsif challenge.participable?
+        self.challenges << challenge
+        self.save
+        challenge.add_counts
+      else
+        return nil
+      end
+    end
   end
 
-  # leave a challenge
+  # leave a challenges
   def leave_challenge(challenge)
-    self.challenges.delete(challenge)
-    self.save
+    User.transaction do
+      if self.challenges.include?(challenge)
+        self.challenges.delete(challenge)
+        self.save
+        challenge.reduce_counts
+      else
+        return nil
+      end
+    end
+  end
+
+  # user participated challenge completed or not
+  def challenge_completed?(challenge)
+    all_feats = challenge.feats
+    uncompleted_feats ||= []
+    completed_feats ||=[]
+    self.checkins.with_challenge(challenge).each do |checkin|
+      completed_feats << checkin.feat
+    end
+    uncompleted_feats = all_feats - completed_feats
+    uncompleted_feats.empty?
+  end
+
+  # uncompleted participated challenges
+  def uncompleted_challenges
+    uncompleted ||= []
+    self.challenges.each do |challenge|
+      unless self.challenge_completed?(challenge)
+        uncompleted << challenge
+      end
+    end
+    return uncompleted
+  end
+
+  # invite a member
+  def request_membership(member)
+    self.request_friendship(member)
+  end
+
+  # accept a membership
+  def accept_membership(member)
+    self.accept_friendship(member)
+  end
+
+  # remove a membership
+  def remove_membership(member)
+    self.deny_friendship(member)
+  end
+
+  # pending requests?
+  def pending_requests(member)
+    self.pending?(member)
+  end
+
+  # members
+  def members
+    members = self.friends
+    members << self
+    members = members.sort_by {|m| [m.earned_points]}.reverse!
+    members.flatten
+  end
+
+  # add a reward to wishlist
+  def add_wish(reward)
+    wish = UserWish.new
+    wish.user_id = self.id
+    wish.reward_id = reward.id
+    wish.save
+  end
+
+  # remove a reward from wishlist
+  def remove_wish(reward)
+    wish = UserWish.find_by_reward_id(reward.id)
+    wish.destroy
+  end
+
+  # redeem a reward
+  def redeem_reward(reward)
+    redemption = Redemption.new
+    redemption.user_id = self.id
+    redemption.reward_id = reward.id
+    redemption.save
   end
   
   # build omniauth
@@ -83,7 +241,7 @@ class User < ActiveRecord::Base
     result
   end
   
-  # insert data from omniauth into user registration build
+  # insert data from omniauth into users registration build
   def self.new_with_session(params, session)
     super.tap do |user|
       if data = session['devise.omniauth'] && session['devise.omniauth']['user_info']
@@ -94,11 +252,4 @@ class User < ActiveRecord::Base
     end
   end
 
-  #load team member
-  def load_team_members
-    members = self.friends
-    members << self
-    members = members.sort_by {|m| [m.sign_in_count]}.reverse!
-    members.flatten
-  end
 end

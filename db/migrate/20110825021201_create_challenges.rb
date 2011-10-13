@@ -5,20 +5,20 @@ class CreateChallenges < ActiveRecord::Migration
       t.string      :name, :null => false
       t.text        :description, :null => false
       t.integer     :bonus_points
-      t.integer     :done_count, :default => 0
+      t.integer     :participants_count, :default => 0
       t.datetime    :start_on
       t.datetime    :end_on
       t.timestamps
     end
 
+    add_index :challenges, :name, :unique => true
+
     create_table :challenges_feats, :id => false do |t|
       t.references  :feat
       t.references  :challenge
-      t.boolean :completed
-      t.timestamps
     end
 
-    add_index :challenges, :name, :unique => true
+    add_index :challenges_feats, [:challenge_id, :feat_id], :unique => true
   end
 
   def self.down

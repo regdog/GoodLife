@@ -1,16 +1,29 @@
 class Feat < ActiveRecord::Base
   belongs_to :category
+  has_and_belongs_to_many :challenges
   has_many :checkins
-  has_many :challenges_feats
-  has_many :challenges, :through => :challenges_feats
 
   has_one :image, :as => :attachable, :dependent => :destroy
   accepts_nested_attributes_for :image, :allow_destroy => true
 
-  default_scope order('checkin_count DESC')
+  # sort by most popular, newest, points, name
+  scope :sort_by_popular, order('checkin_count DESC')
+  scope :sort_by_newest, order('created_at DESC')
+  scope :sort_by_points, order('bonus_points DESC')
+  scope :sort_by_name, order('name DESC')
 
+  # latest checkins
+  def latest_checkins
+     self.checkins.latest
+  end
 
-  def conv_name
-    self.name.force_encoding('UTF-8')
+  # epic checkins
+  def epic_checkins
+    self.checkins.epic
+  end
+
+  def add_counts
+    self.checkin_count = self.checkin_count + 1
+    self.save
   end
 end
