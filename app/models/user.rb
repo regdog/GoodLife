@@ -1,4 +1,4 @@
-require "party_boy"
+ require "party_boy"
 
 class User < ActiveRecord::Base
   include Party::Boy
@@ -63,11 +63,15 @@ class User < ActiveRecord::Base
   # team checkins
   def team_checkins
     checkins ||= []
-    member_ids ||= []
-    self.members.each do |member|
-      member_ids << member.id
+    friend_ids ||= []
+    self.friends.each do |friend|
+      friend_ids << friend.id
     end
-    checkins = Checkin.where("user_id in ?", member_ids)
+    if friend_ids.empty?
+      return nil
+    else
+      checkins = Checkin.where("user_id in ?", friend_ids).order("created_at DESC")
+    end
   end
 
   # user's latest checkins
@@ -94,6 +98,7 @@ class User < ActiveRecord::Base
     PlannedTodo.weekly(self).each do |plan|
       feats << plan.feat
     end
+    return feats
   end
 
   def weekend_feats
@@ -101,6 +106,7 @@ class User < ActiveRecord::Base
     PlannedTodo.weekend(self).each do |plan|
       feats << plan.feat
     end
+    return feats
   end
 
   # accept a challenges

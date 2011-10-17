@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111005072737) do
+ActiveRecord::Schema.define(:version => 20111017123453) do
 
   create_table "accepted_challenges", :force => true do |t|
     t.integer  "user_id"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20111005072737) do
   add_index "accepted_challenges", ["user_id"], :name => "index_accepted_challenges_on_user_id"
 
   create_table "admin_users", :force => true do |t|
+    t.integer  "partner_id"
     t.string   "email",                                 :default => "", :null => false
     t.string   "encrypted_password",     :limit => 128, :default => "", :null => false
     t.string   "reset_password_token"
@@ -46,15 +47,6 @@ ActiveRecord::Schema.define(:version => 20111005072737) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-
-  create_table "categories", :force => true do |t|
-    t.string  "name"
-    t.string  "category_type"
-    t.integer "parent_id"
-    t.integer "position"
-  end
-
-  add_index "categories", ["name", "category_type"], :name => "index_categories_on_name_and_category_type", :unique => true
 
   create_table "challenges", :force => true do |t|
     t.integer  "creator_id"
@@ -106,12 +98,12 @@ ActiveRecord::Schema.define(:version => 20111005072737) do
   end
 
   create_table "contents", :force => true do |t|
-    t.integer  "category_id"
-    t.integer  "user_id"
-    t.string   "permalink",                                    :null => false
-    t.string   "title",       :limit => 100, :default => "",   :null => false
-    t.text     "content",                                      :null => false
-    t.boolean  "draft",                      :default => true
+    t.integer  "tag_id"
+    t.integer  "admin_user_id"
+    t.string   "permalink",                                      :null => false
+    t.string   "title",         :limit => 100, :default => "",   :null => false
+    t.text     "content",                                        :null => false
+    t.boolean  "draft",                        :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -119,13 +111,15 @@ ActiveRecord::Schema.define(:version => 20111005072737) do
   add_index "contents", ["permalink"], :name => "index_contents_on_permalink", :unique => true
 
   create_table "feats", :force => true do |t|
-    t.integer  "category_id"
-    t.string   "name",          :limit => 30,                 :null => false
+    t.integer  "creator_id"
+    t.string   "creator_type"
+    t.string   "name",          :limit => 30,                     :null => false
     t.string   "description",   :limit => 200
     t.text     "why"
     t.text     "how"
     t.integer  "bonus_points",  :limit => 3,   :default => 0
     t.integer  "checkin_count",                :default => 0
+    t.boolean  "published",                    :default => false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -140,7 +134,7 @@ ActiveRecord::Schema.define(:version => 20111005072737) do
   end
 
   create_table "partners", :force => true do |t|
-    t.integer  "category_id"
+    t.integer  "tag_id"
     t.string   "name",        :null => false
     t.text     "description"
     t.string   "website"
@@ -183,7 +177,6 @@ ActiveRecord::Schema.define(:version => 20111005072737) do
   end
 
   create_table "rewards", :force => true do |t|
-    t.integer  "category_id"
     t.integer  "partner_id"
     t.string   "name",                                                       :null => false
     t.text     "description",                                                :null => false
@@ -203,6 +196,23 @@ ActiveRecord::Schema.define(:version => 20111005072737) do
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+
+  create_table "taggings", :force => true do |t|
+    t.integer "tag_id"
+    t.integer "taggable_id"
+    t.string  "taggable_type"
+  end
+
+  add_index "taggings", ["tag_id"], :name => "index_taggings_on_tag_id"
+  add_index "taggings", ["taggable_id", "taggable_type"], :name => "index_taggings_on_taggable_id_and_taggable_type"
+
+  create_table "tags", :force => true do |t|
+    t.string  "name"
+    t.string  "kind"
+    t.integer "position"
+  end
+
+  add_index "tags", ["name", "kind"], :name => "index_tags_on_name_and_kind", :unique => true
 
   create_table "uploads", :force => true do |t|
     t.integer  "attachable_id"

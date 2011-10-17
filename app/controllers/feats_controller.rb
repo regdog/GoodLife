@@ -1,17 +1,16 @@
 class FeatsController < ApplicationController
   def index
-    if params[:type]
-      @category = Category.feat_category.find_by_name(params[:type]) if params[:type]
-      if @category
-        @feats = @category.feats
-      end
-    else
-      redirect_to all_feats_path
-    end
+    redirect_to catalog_feats_path
   end
 
-  def all
-    @feats = Feat.all
+  def catalog
+    if params[:type]
+      @category = Tag.of_kind("Feat").find_by_name(params[:type])
+      @feats = @category.feats if @category
+      @view_by = params[:type]
+    else
+      @feats = Feat.all
+    end
     render :index
   end
 
