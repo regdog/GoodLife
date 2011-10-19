@@ -11,7 +11,7 @@ GoodLife::Application.routes.draw do
 
   resources :authentications
 
-  devise_for :admin_users, :path => :admin
+  devise_for :admin_users, :path => :admin, :module=>:admin
 
   scope "/view" do
     resources :checkins, :only => [:index] do
