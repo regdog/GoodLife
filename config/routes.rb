@@ -5,10 +5,12 @@ GoodLife::Application.routes.draw do
     get 'profile', :to => "user/registrations#edit", :as=>'profile'
     get 'my_checkins', :to => 'user/registrations#my_checkins', :as=>'my_checkins'
   end
+
+  devise_for :partners
  
   match '/user' => "feats#index", :as => :user_root
 
-  resources :authentications
+  resources :authentications, :only => [:index, :destroy]
 
   devise_for :admin_users, :path => :admin, :module=>:admin
 
