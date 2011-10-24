@@ -6,7 +6,7 @@ GoodLife::Application.routes.draw do
     get 'my_checkins', :to => 'user/registrations#my_checkins', :as=>'my_checkins'
   end
 
-  devise_for :partners
+  # devise_for :partners
  
   match '/user' => "feats#index", :as => :user_root
 
