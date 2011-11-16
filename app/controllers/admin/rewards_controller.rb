@@ -1,4 +1,7 @@
 class Admin::RewardsController < Admin::BaseController
+
+  load_and_authorize_resource
+
   def index
     @search = Reward.search(params[:search])
     if params[:type]

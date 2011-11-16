@@ -1,0 +1,30 @@
+
+<div class="row">
+  <div class="column grid_10">
+    <h1>All Roles </h1>
+      <table class="list">
+        <tr>
+          <th>Name</th>
+          <th colspan="2">Action</th>
+        </tr>
+        <% for role in @roles %>
+          <tr>
+            <td><%= link_to role.name, edit_admin_role_path(role) %></td>
+            <td><%= link_to 'Delete', admin_role_path(role), :confirm => 'Are you sure?', :method => :delete  %></td>
+          </tr>
+        <% end %>
+      </table>
+        <div class="clear"></div>
+  </div>
+  <div class="column grid_3">
+    <%= link_to "Create New Role", new_admin_role_path %>
+    <h3>Search Role</h3>
+    <%= form_for @search,:url => admin_roles_path, :html => {:method=>'get'} do |f| %>
+	  <p>
+        <%= f.label :name_contains %>
+		<%= f.text_field :name_contains %>
+      </p>
+      <p><%= f.submit 'Go' %></p>
+	<% end %>
+  </div>
+</div>

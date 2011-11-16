@@ -1,4 +1,7 @@
 class Admin::ContentsController < Admin::BaseController
+
+  load_and_authorize_resource
+
   def index
     if params[:type] && Tag.of_kind("Content").include?(params[:type])
       @view_by = params[:type]

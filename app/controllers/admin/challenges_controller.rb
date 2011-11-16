@@ -1,4 +1,5 @@
 class Admin::ChallengesController < Admin::BaseController
+  load_and_authorize_resource
   def index
     @search = Challenge.search(params[:search])
     @challenges = Challenge.order(:name).page(params[:page]).per(8)

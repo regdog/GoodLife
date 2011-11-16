@@ -73,5 +73,6 @@ GoodLife::Application.routes.draw do
     end
     resources :rewards, :challenges, :partners, :categories, :contents
     resources :users, :only => [:index, :show, :destroy]
+    resources :roles
   end
 end

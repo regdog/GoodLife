@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111017123453) do
+ActiveRecord::Schema.define(:version => 20111102061514) do
 
   create_table "accepted_challenges", :force => true do |t|
     t.integer  "user_id"
@@ -39,6 +39,15 @@ ActiveRecord::Schema.define(:version => 20111017123453) do
 
   add_index "admin_users", ["email"], :name => "index_admin_users_on_email", :unique => true
   add_index "admin_users", ["reset_password_token"], :name => "index_admin_users_on_reset_password_token", :unique => true
+
+  create_table "assignments", :force => true do |t|
+    t.integer  "admin_user_id"
+    t.integer  "role_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "assignments", ["admin_user_id", "role_id"], :name => "index_assignments_on_admin_user_id_and_role_id", :unique => true
 
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
@@ -183,6 +192,12 @@ ActiveRecord::Schema.define(:version => 20111017123453) do
     t.integer  "redeem_points"
     t.decimal  "save_money",    :precision => 8, :scale => 2
     t.integer  "redeem_count",                                :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "roles", :force => true do |t|
+    t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

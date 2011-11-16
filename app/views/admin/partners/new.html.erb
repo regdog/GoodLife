@@ -43,8 +43,28 @@
           </p>
         <% end %>
       </div>
+        <%= f.fields_for :admin_users do |admin_user|%>
+          <p>
+            <%= admin_user.label "E-mail" %><br/>
+            <%= admin_user.email_field :email %>
+          </p>
+          <p>
+            <%= admin_user.label "Password" %><br/>
+            <%= admin_user.password_field :password %>
+          </p>
+          <p>
+            <%= admin_user.label "Password Confirmation" %><br/>
+            <%= admin_user.password_field :password_confirmation %>
+          </p>
+          <% @roles.each do |role|%>
+            <div>
+              <%= check_box_tag 'partner[admin_users_attributes][0][role_ids][]', role.id%>
+              <%=h role.name%>
+            </div>
+          <%end%>
+          <%= hidden_field_tag 'partner[admin_users_attributes][0][role_ids][]', '' %>
+        <%end%>
       <p><%= f.submit "Create" %></p>
     <% end %>
   </div>
-  <%# render :partial => 'crud_right' %>
 </div>

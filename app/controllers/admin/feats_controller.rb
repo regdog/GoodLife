@@ -1,4 +1,5 @@
 class Admin::FeatsController < Admin::BaseController
+  load_and_authorize_resource
   respond_to :json, :only => :feat_tokens
   skip_before_filter :authenticate_admin_user!, :only => [:feats_token]
 

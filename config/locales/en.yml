@@ -225,3 +225,15 @@ en:
 
       full_messages:
         format: "%{attribute} %{message}"
+
+  unauthorized:
+    manage:
+      all: "Not authorized to %{action} %{subject}."
+      user: "Sorry, you are not authorized to manage %{subject}."
+      feat: "Sorry, you are not authorized to manage %{subject}"
+      challenge: "Sorry, you are not authorized to %{action} %{subject}"
+      reward: "Sorry, you are not authorized to %{action} %{subject}"
+      partner: "Sorry, you are not authorized to %{action} %{subject}"
+      content: "Sorry, you are not authorized to %{action} %{subject}"
+      tag: "Sorry, you are not authorized to %{action} %{subject}"
+      role: "Sorry, you are not authorized to %{action} %{subject}"
