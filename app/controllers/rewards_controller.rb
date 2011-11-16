@@ -1,26 +1,31 @@
 class RewardsController < ApplicationController
   def index
-    redirect_to local_rewards_path
   end
 
   def local
-    if params[:type]
-      @category = Tag.of_kind("Reward").find_by_name(params[:type]) if params[:type]
-      if @category
-        @rewards = @category.rewards
-      end
-    else
-      @rewards = Reward.all
+    parameters = {:partner_tag_name_starts_with => 'Local'}
+    if params[:address] && params[:address] != ''
+      parameters[:city_or_street_or_zipcode_contains] = params[:address]
+    #else
+    #  parameters[:partner_city_or_partner_street_or_partner_zip_code_contains] = 'chengdu'
     end
-    render :index
+    if params[:keyword]
+      parameters[:partner_business_name_contains] = params[:keyword]
+    end
+    if params[:type] && params[:type]!= 'all'
+      parameters[:tags_name_equals] = params[:type]
+    end
+
+    @rewards = Reward.search(parameters).page(params[:page]).per(20)
   end
 
   def premium
-    render :index
+    @rewards = Reward.premium
+    @page_title
   end
 
   def wishlist
-    render :index
+    @rewards = current_user.wishes
   end
 
   def show
@@ -28,4 +33,21 @@ class RewardsController < ApplicationController
     render :layout => 'corp'
   end
 
+  def add_wish
+    @reward = Reward.find(params[:id])
+    current_user.add_wish(@reward)
+
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def remove_wish
+    @reward = Reward.find(params[:id])
+    current_user.remove_wish(@reward)
+
+    respond_to do |format|
+      format.js
+    end
+  end
 end

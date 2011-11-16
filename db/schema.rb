@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111102061514) do
+ActiveRecord::Schema.define(:version => 20111115144647) do
 
   create_table "accepted_challenges", :force => true do |t|
     t.integer  "user_id"
@@ -99,8 +99,8 @@ ActiveRecord::Schema.define(:version => 20111102061514) do
 
   create_table "comments", :force => true do |t|
     t.integer  "checkin_id"
-    t.integer  "users_id"
-    t.text     "content"
+    t.integer  "user_id"
+    t.string   "content"
     t.string   "user_ip"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -122,8 +122,7 @@ ActiveRecord::Schema.define(:version => 20111102061514) do
   create_table "feats", :force => true do |t|
     t.integer  "creator_id"
     t.string   "creator_type"
-    t.string   "name",          :limit => 30,                     :null => false
-    t.string   "description",   :limit => 200
+    t.string   "name",          :limit => 100,                    :null => false
     t.text     "why"
     t.text     "how"
     t.integer  "bonus_points",  :limit => 3,   :default => 0
@@ -144,18 +143,22 @@ ActiveRecord::Schema.define(:version => 20111102061514) do
 
   create_table "partners", :force => true do |t|
     t.integer  "tag_id"
-    t.string   "name",        :null => false
+    t.string   "business_name", :null => false
     t.text     "description"
     t.string   "website"
     t.string   "country"
-    t.string   "region"
+    t.string   "state"
     t.string   "city"
     t.string   "street"
-    t.string   "zip_code"
+    t.string   "zipcode"
     t.float    "latitude"
     t.float    "longitude"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "contact"
+    t.string   "title"
+    t.string   "phone"
+    t.string   "email"
   end
 
   create_table "planned_todos", :force => true do |t|
@@ -170,6 +173,12 @@ ActiveRecord::Schema.define(:version => 20111102061514) do
   create_table "redemptions", :force => true do |t|
     t.integer  "user_id"
     t.integer  "reward_id"
+    t.string   "name"
+    t.string   "address"
+    t.string   "city"
+    t.string   "region"
+    t.string   "country"
+    t.string   "phone"
     t.datetime "created_at"
   end
 
@@ -188,12 +197,19 @@ ActiveRecord::Schema.define(:version => 20111102061514) do
   create_table "rewards", :force => true do |t|
     t.integer  "partner_id"
     t.string   "name",                                                       :null => false
-    t.text     "description",                                                :null => false
+    t.text     "information",                                                :null => false
+    t.string   "valid_term",                                                 :null => false
+    t.string   "disclaimer",                                                 :null => false
     t.integer  "redeem_points"
     t.decimal  "save_money",    :precision => 8, :scale => 2
     t.integer  "redeem_count",                                :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "country"
+    t.string   "state"
+    t.string   "city"
+    t.string   "street"
+    t.string   "zipcode"
   end
 
   create_table "roles", :force => true do |t|
@@ -252,6 +268,7 @@ ActiveRecord::Schema.define(:version => 20111102061514) do
     t.string   "email",                                                               :default => "",  :null => false
     t.string   "encrypted_password",     :limit => 128,                               :default => ""
     t.string   "name"
+    t.integer  "category",               :limit => 1,                                 :default => 0
     t.integer  "earned_points",          :limit => 8,                                 :default => 0
     t.decimal  "life_score",                            :precision => 2, :scale => 1, :default => 0.0
     t.string   "reset_password_token"

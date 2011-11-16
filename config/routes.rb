@@ -1,30 +1,30 @@
 GoodLife::Application.routes.draw do
   root :to => "welcome#index"
 
-  devise_for :users, :controllers => {:omniauth_callbacks=>'user/omniauth_callbacks', :registrations=>'user/registrations'} do
-    get 'profile', :to => "user/registrations#edit", :as=>'profile'
-    get 'my_checkins', :to => 'user/registrations#my_checkins', :as=>'my_checkins'
+  devise_for :users, :controllers => {:omniauth_callbacks=>'users/omniauth_callbacks', :registrations => 'users/registrations'} do
+    get 'profile', :to => "users/registrations#edit", :as=>'profile'
   end
-
-  # devise_for :partners
  
   match '/user' => "feats#index", :as => :user_root
 
   resources :authentications, :only => [:index, :destroy]
 
   devise_for :admin_users, :path => :admin, :module=>:admin
-
+  
   scope "/view" do
-    resources :checkins, :only => [:index] do
+    resources :checkins, :only => [:index, :create] do
+      resources :comments
       collection do
         get 'latest'
         get 'epic'
       end
+      post 'comments/:content'=> 'comments#create', :as => 'quick_comment'
     end
     resources :feats, :only => [:index, :show] do
       get 'catalog', :on => :collection
       get 'checkin', :on => :member
     end
+    match 'feats/:id/plan/:type' => 'feats#plan', :as => 'plan_feats'
 
     get 'plans' => "plans#index"
     get 'plans/daily' => "plans#daily", :as => "daily_plans"
@@ -44,15 +44,22 @@ GoodLife::Application.routes.draw do
       get 'local', :on => :collection
       get 'premium', :on => :collection
       get 'wishlist', :on => :collection
+      get 'add_wish', :on => :member
+      get 'remove_wish', :on => :member
     end
+    match 'rewards/local/:type(/:address)' => 'rewards#local', :as => :search_local_rewards
   end
 
-  get 'team/members' => "team#members", :as => :members_team
-  get 'team/checkins' => "team#checkins", :as => :checkins_team
-  get 'team/requests' => "team#requests", :as => :requests_team
-  get 'team/invite' => "team#invite", :as => :invite_team
+  resources :redemptions, :only => [:create]
+  get '/rewards/redeem/:reward_id' => 'redemptions#new', :as => :new_redemption
 
-  get 'member/:nameid' => "member#show"
+  get 'team' => "team#index", :as => :teammates
+  get 'team/checkins' => "team#checkins", :as => :team_checkins
+  get 'team/requests' => "team#requests", :as => :my_requests
+  get 'team/invitation' => "team#invitation", :as => :invitation
+  get 'team/invite' => 'team#invite'
+
+  get 'member/:nameid' => "member#show", :as => :member
 
   match 'corp/:permalink' => 'contents#show'
   get 'search/index', :as => :search

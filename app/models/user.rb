@@ -30,6 +30,31 @@ class User < ActiveRecord::Base
   # my redemptions
   has_many :redemptions
 
+  # user types
+  MOM           = 1
+  DAD           = 2
+  STUDENT       = 3
+  RECENT_GRAD   = 4
+  WORKING_ADULT = 5
+  GRANDPARENT   = 6
+  RETIRED       = 7
+  NONE          = 8
+
+  CATEGORIES = {
+    MOM           => 'I am a mom',
+    DAD           => 'I am a dad',
+    STUDENT       => 'I am a student',
+    RECENT_GRAD   => 'I am a recent grad',
+    WORKING_ADULT => 'I am a working adult',
+    GRANDPARENT   => 'I am a grandparent',
+    RETIRED       => 'I am retired',
+    NONE          => 'None of the above fit'
+  }
+
+  def category_name
+    CATEGORIES[category]
+  end
+
   # feats I'v done
   def feats_done
     feats ||= []
@@ -63,25 +88,49 @@ class User < ActiveRecord::Base
   # team checkins
   def team_checkins
     checkins ||= []
-    friend_ids ||= []
-    self.friends.each do |friend|
-      friend_ids << friend.id
+    member_ids ||= []
+    self.members.each do |member|
+      member_ids << member.id
     end
-    if friend_ids.empty?
+    if member_ids.empty?
       return nil
     else
-      checkins = Checkin.where("user_id in ?", friend_ids).order("created_at DESC")
+      checkins = Checkin.where(:user_id => member_ids).order("created_at DESC")
     end
   end
 
-  # user's latest checkins
+  # users's latest checkins
   def latest_checkins
     self.checkins.latest
   end
 
-  # user's epic checkins
+  # users's epic checkins
   def epic_checkins
     self.checkins.epic
+  end
+
+  # plan feat
+  def plan(feat, type)
+    plan = PlannedTodo.find_by_user_id_and_feat_id(self.id, feat.id)
+    unless plan.nil?
+      plan.plan_type = type
+    else
+      plan = PlannedTodo.new
+      plan.user_id = self.id
+      plan.feat_id = feat.id
+      plan.plan_type = type
+    end
+    plan.save
+  end
+
+  # feat planed type
+  def plan_type(feat)
+    plan = PlannedTodo.find_by_user_id_and_feat_id(self.id, feat.id)
+    unless plan.nil?
+      return plan.plan_type
+    else
+      return nil
+    end
   end
 
   # planned feats: daily, weekly, weekend
@@ -137,7 +186,7 @@ class User < ActiveRecord::Base
     end
   end
 
-  # user participated challenge completed or not
+  # users participated challenge completed or not
   def challenge_completed?(challenge)
     all_feats = challenge.feats
     uncompleted_feats ||= []
@@ -188,6 +237,16 @@ class User < ActiveRecord::Base
     members.flatten
   end
 
+  # outgoing membership requests
+  def outgoing_member_requests
+    self.outgoing_friend_requests
+  end
+
+  # incoming membership requests
+  def incoming_member_requests
+    self.incoming_friend_requests
+  end
+
   # add a reward to wishlist
   def add_wish(reward)
     wish = UserWish.new
@@ -209,7 +268,7 @@ class User < ActiveRecord::Base
     redemption.reward_id = reward.id
     redemption.save
   end
-  
+
   # build omniauth
   def apply_omniauth(omniauth)
      authentications.build(:provider => omniauth['provider'], :uid => omniauth['uid'])

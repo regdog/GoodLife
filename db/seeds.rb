@@ -4,7 +4,6 @@
 # Examples:
 #
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
-#   Mayor.create(:name => 'Daley', :city => cities.first)
 
 # Roles
 ['Admin', 'Feats', 'Challenges', 'Rewards'].each do |role|
@@ -13,4 +12,3 @@ end
 
 # Assign Role for Admin
 AdminUser.find_by_email('admin@goodlife.com').role_ids = [Role.find_by_name('Admin').id]
-

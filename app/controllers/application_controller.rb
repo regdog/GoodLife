@@ -3,12 +3,6 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   before_filter :load_corp_pages
 
-  #def find_my_team
-  #  if current_user
-  #    @my_team = current_user.load_team_members
-  #  end
-  #end
-
   def current_ability
     @current_ability ||= Ability.new(current_admin_user)
   end
@@ -24,10 +18,8 @@ class ApplicationController < ActionController::Base
   end
   
   def load_corp_pages
-    category = Tag.find_by_name("Page")
-    unless category.nil?
-      @pages = category.contents
-    end
+    tag = Tag.find_by_name("Page")
+    @pages = tag.contents
   end
   
   private
@@ -41,10 +33,10 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
-       if resource.is_a?(AdminUser)
-         admin_root_path
-       else
-         super
-       end
+    if resource.is_a?(AdminUser)
+      admin_root_path
+    else
+      super
+    end
   end
 end

@@ -1,21 +1,18 @@
-<% tabnav :feats do %>
-<div class="row">
+<%# tabnav :feats do %>
+<div class="pagetitle"><h1>Your planned feats</h1></div>
 <div class="column grid_2">
-  <%= render :partial => 'subnav' %>
+  <%= render :partial => 'leftnav' %>
 </div>
 <div class="column grid_8">
-    <% tableize @feats,
+  <p><%= paginate @feats %></p>
+  <% tableize @feats,
                 :name => 'feats',
                 #:header => 'Listing Feats',
-                :cols => 4,
-                :generate_css => 'true' do |feat| %>
+                :cols => 4 do |feat| %>
 
-      <h3><%= link_to "!#{feat.name}", :action => 'show', :id => feat.id %></h3>
-      <p><%= image_tag feat.image.url(:medium) if feat.image %></p>
-      <p><%= raw truncate feat.description, :length => 30, :separator => ' ' %></p>
-      <p><%= "#{feat.bonus_points}pts" %></p>
-      <%= link_to 'did it', checkin_feat_path(feat) if current_user %>
-    <% end %>
+    <%= render :partial => "shared/featgrid", :locals => {:feat => feat} %>
+  <% end if @feats %>
 </div>
-</div>
-<% end %>
+<div class="column grid_4">
+  <%= render :partial => "shared/rightbar" %>
+</div><%# end %>
