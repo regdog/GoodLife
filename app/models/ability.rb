@@ -25,7 +25,8 @@ class Ability
     #
     # See the wiki for details: https://github.com/ryanb/cancan/wiki/Defining-Abilities
 
-    #admin_user ||= AdminUser.new
+    admin_user ||= AdminUser.new
+    
     if admin_user.has_role? :admin
       can :manage, :all
     end
@@ -47,6 +48,5 @@ class Ability
     if admin_user.has_role? :rewards
       can :manage, Reward
     end
-
   end
 end

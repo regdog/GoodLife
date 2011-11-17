@@ -31,7 +31,6 @@ class Admin::PartnersController < Admin::BaseController
   end
 
   def edit
-    #@partner = Partner.find(params[:id]).becomes(Partner)
     @partner = Partner.find(params[:id])
     @roles = Role.where('name != ?', 'Admin')
     @admin = @partner.admin_users.first

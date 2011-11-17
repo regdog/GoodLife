@@ -1,15 +1,22 @@
-<% tabnav :checkins do %>
-<% tableize @checkins,
-            :name => 'checkins',
-            :cols => 4,
-            :generate_css => 'true' do |checkin| %>
-
-     <h3><%= "#{checkin.user.name} did !#{checkin.feat.name}" %></h3>
-     <% checkin.challenges.each do |challenge| %>
-       <p><small><%= checkin.user.name %> was working on <%= challenge.name  %></small></p>
-     <% end %>
-     <small><%= "#{time_ago_in_words checkin.created_at} ago"  %></small>
-
-<% end %>
-
-<% end %>
+<div class="pagetitle">
+  <h1>
+  <% case params[:action] %>
+    <% when 'epic' %>
+      Recent awesome checkins
+    <% else %>
+      Give props to people doing good
+  <% end %>
+  </h1>
+</div>
+<div class="column grid_10">
+  <div class="thirdnav">
+    <div class="item"><%= link_to 'Latest', checkins_path, :class=>"#{params[:action]=='index' ? 'active' : ''}" %></div>
+    <div class="last"><%= link_to 'Epic', epic_checkins_path, :class=>"#{params[:action]=='epic' ? 'active' : ''}" %></div>
+  </div>
+  <% @checkins.each do |checkin| %>
+    <%= render :partial => "shared/checkinfeed", :locals => {:checkin => checkin } %>
+  <% end %>
+</div>
+<div class="column grid_4">
+  <%= render :partial => "shared/rightbar" %>
+</div>

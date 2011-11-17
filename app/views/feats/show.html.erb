@@ -1,6 +1,27 @@
-<h1>!<%= @feat.name %> </h1>
-<p><%= image_tag @feat.image.url(:small) if @feat.image %></p>
-<p>Description<br/><%= @feat.description %></p>
-<p>Why<br/><%= @feat.why.html_safe %></p>
-<p>How<br/><%= @feat.how.html_safe %></p>
-<p>Points<br/><%= @feat.bonus_points %></p>
+<div class="pagetitle"><h1><%= @feat.name %></h1></div>
+<div class="column grid_10">
+  <div class="feat">
+    <div class="sponsorrow"></div>
+    <div class="main">
+      <div class="stampside">
+        <div class="stampcontainer">
+          <%= render :partial => "shared/featgrid", :locals => {:feat => @feat} %>
+        </div>
+      </div>
+      <div class="details">
+        <span class="title">Why?</span>
+        <br/>
+        <%= @feat.why.html_safe %>
+        <br/>
+        <br/>
+        <span class="title">How?</span>
+        <br/>
+        <%= @feat.how.html_safe %>
+      </div>
+    </div>
+    <%= render :partial =>"checkins" %>
+  </div>
+</div>
+<div class="column grid_4">
+  <%= render :partial => "shared/rightbar" %>
+</div>

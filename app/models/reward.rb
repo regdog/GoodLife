@@ -9,15 +9,16 @@ class Reward < ActiveRecord::Base
 
   has_one :image, :as => :attachable, :dependent => :destroy
   accepts_nested_attributes_for :image, :allow_destroy => true
+  scope :of_kind, lambda { |kind| { :conditions => {:kind => kind} } }
 
   # local rewards
   def self.local
-    Reward.search :partner_category_id_equals => Category.local.id
+    Reward.search :partner_tag_name_starts_with => "Local"
   end
 
   #premium rewards
   def self.premium
-    Reward.search :partner_category_id_equals => Category.local.id
+    Reward.search :partner_tag_name_starts_with => "National"
   end
 
   def tag_tokens=(ids)

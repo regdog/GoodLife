@@ -1,0 +1,122 @@
+<aside>
+  <% unless user_signed_in? %>
+    <div class="row">
+      <div class="column grid_4 rightbarsection">
+        <div class="title">most populate feats</div>
+        <div>
+          <table>
+            <tbody>
+            <% Feat.sort_by_popular.limit(5).each do |f| %>
+              <tr height="35">
+                <td width="30"><%= link_to image_tag(f.image.url(:small)), feat_path(f) if f.image %></td>
+                <td class="smalltext"><%= link_to "!#{f.name}", feat_path(f) %></td>
+                <td class="smalltext" align="right" width="80">for <%="#{f.bonus_points} pts" %></td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="column grid_4 rightbarsection">
+        <div class="title">most populate rewards</div>
+        <div>
+          <table>
+            <tbody>
+            <% Reward.limit(5).each do |r| %>
+              <tr height="35">
+                <td width="30"><%= link_to image_tag(r.image.url(:small)), reward_path(r) if r.image %></td>
+                <td class="smalltext"><%= link_to "!#{r.name}", reward_path(r) %></td>
+                <td class="smalltext" align="right" width="80"><%="#{r.redeem_points} points" %></td>
+              </tr>
+            <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  <% else %>
+    <div class="row">
+       <div class="column grid_4 rightbarsection">
+         <div class="title">Quick check-in</div>
+         <div>
+         </div>
+       </div>
+    </div>
+    <div class="row">
+       <div class="column grid_4 rightbarsection">
+         <div class="title">Search</div>
+         <div>
+         </div>
+       </div>
+    </div>
+    <div class="row">
+       <div class="column grid_4 rightbarsection">
+         <div class="title">My life score</div>
+         <div class="lifescoreblock">
+           <div class="profilepic"></div>
+           <div class="lifescore">
+             <div class="score"><%= current_user.life_score %></div>
+             <div class="name">life score</div>
+           </div>
+           <div class="lifescore">
+             <div class="score"><%= current_user.feats_done.size %></div>
+             <div class="name">feats done</div>
+           </div>
+           <div class="lifescore">
+             <div class="score"><%= current_user.earned_points %></div>
+             <div class="name">points earned</div>
+           </div>
+         </div>
+       </div>
+    </div>
+    <div class="row">
+       <div class="column grid_4 rightbarsection">
+         <div class="title">My team</div>
+         <% current_user.members.each do |m| %>
+         <div class="rightbarrow">
+           <div class="rightbar_left">
+             <div width="30" style="float: left;margin-right: 5px;"><%= image_tag "/images/im_facebookprofile.png" %></div>
+             <div class="smalltext"><%= link_to m.name, member_path(m) %></div>
+           </div>
+           <div class="rightbar_right">
+             <div class="smalltext" align="right" width="80"><%="#{m.earned_points} pts" %></div>
+           </div>
+         </div>
+         <% end %>
+         <div class="subfooter"><%= link_to "Invite friends now!", new_user_invitation_path %></div>
+       </div>
+    </div>
+    <div class="row">
+       <div class="column grid_4 rightbarsection">
+         <div class="title">my challenges</div>
+         <% current_user.challenges.each do |c| %>
+           <% if current_user.challenge_completed?(c) %>
+             <div class="rightbarrow">
+               <div class="rightbar_left"><%= c.name %></div>
+               <div class="rightbar_right">done</div>
+             </div>
+           <% else %>
+             <div class="rightbarrow">
+               <div class="rightbar_left"><%= c.name %></div>
+               <div class="rightbar_right"><%= "#{c.completed_feats(current_user).size}/#{c.feats.size}" %></div>
+             </div>
+           <% end %>
+         <% end %>
+       </div>
+    </div>
+    <div class="row">
+       <div class="column grid_4 rightbarsection">
+         <div class="title">my wishlist</div>
+         <% current_user.wishes.each do |wish| %>
+           <div class="rightbarrow">
+             <div class="rightbar_left"><%= wish.name %></div>
+             <div class="rightbar_right"><%= wish.redeem_points %> pts</div>
+           </div>
+         <% end %>
+       </div>
+    </div>
+  <% end %>
+</aside>
+<div id="clear"></div>
