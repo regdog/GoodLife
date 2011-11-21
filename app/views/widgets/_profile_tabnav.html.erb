@@ -26,17 +26,22 @@ render_tabnav :profile,
   #end
 
   add_tab do |t|
-    t.named 'My Checkins'
-    t.links_to member_path
-    t.highlights_on :controller => 'member', :action => 'show'
+    t.named 'Profile'
+    t.links_to profile_path
+    t.highlights_on :controller => 'user/registrations', :action => 'edit'
   end
 
   add_tab do |t|
-    t.named 'Profile'
-    t.links_to profile_path
-    t.highlights_on :controller => 'devise/registrations', :action => 'edit'
+    t.named 'My Checkins'
+    t.links_to my_checkins_path
+    t.highlights_on :controller => 'user/registrations', :action => 'my_checkins'
   end
 
+  add_tab do |t|
+     t.named 'Authentications'
+     t.links_to authentications_path
+     t.highlights_on :controller => 'authentications', :action => 'index'
+  end
 
    #Tag.of_kind("Reward").each do |c|
    #  add_tab do |t|

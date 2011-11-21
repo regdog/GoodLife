@@ -73,6 +73,23 @@
             <% end %>
           <% end %>
       </div>
+      <%= f.fields_for :admin_users do |admin_user|%>
+          <p><%= admin_user.label :email %><br />
+          <%= admin_user.email_field :email %></p>
+
+          <p><%= admin_user.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+          <%= admin_user.password_field :password %></p>
+
+          <p><%= admin_user.label :password_confirmation %><br />
+          <%= admin_user.password_field :password_confirmation %></p>
+          <% @roles.each do |role|%>
+            <div>
+              <%= check_box_tag 'partner[admin_users_attributes][0][role_ids][]', role.id, @admin.roles.include?(role)%>
+              <%=h role.name%>
+            </div>
+          <%end%>
+          <%= hidden_field_tag 'partner[admin_users_attributes][0][role_ids][]', '' %>
+      <%end%>
       <p><%= f.submit "Update" %></p>
     <% end %>
   </div>

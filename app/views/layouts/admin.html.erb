@@ -41,25 +41,41 @@
     .admin_navigation a.active {
         font-weight: bold;
     }
+    .notice {
+        margin: 0px 5px 0px auto;
+        float: left;
+    }
+    .alert {
+        margin: 0px 5px 0px auto;
+        float: left;
+    }
   </style>
 </head>
 <body>
 <div id="wrapper">
   <div class="row" id="header">
     <div class="column grid_14">
+       <p class="notice"><%= notice %></p>
+       <p class="alert"><%= alert %></p>
       <div id="admin_navigation" class="admin_navigation">
         <ul>
           <li><%= link_to "Public Site", root_path %></li>
-          <li><%= link_to "Sign Out", destroy_admin_user_session_path, :method => :delete %></li>
+          <%if admin_user_signed_in?%>
+            <li><%= link_to "Sign Out", destroy_admin_user_session_path, :method => :delete %></li>
+          <%end%>
         </ul>
       </div>
     </div>
   </div>
   <div class="row" id="content">
     <div class="column grid_14">
-     <% tabnav :admin do %>
-         <%= yield %>
-     <% end %>
+        <% if admin_user_signed_in? %>
+           <% tabnav :admin do %>
+	         <%= yield %>
+	  	   <% end %>
+        <% else %>
+           <%=yield%>
+        <% end %>
     </div>
   </div>
   <div id="clear"></div>

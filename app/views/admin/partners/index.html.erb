@@ -8,6 +8,8 @@
           <th>City</th>
           <th>Type</th>
           <th>Web Site</th>
+          <th>E-mail</th>
+          <th>Role</th>
           <th>Action</th>
         </tr>
         <% for partner in @partners %>
@@ -15,8 +17,10 @@
             <td><%= link_to partner.business_name, edit_admin_partner_path(partner) %></td>
             <td><%= partner.state %></td>
             <td><%= partner.city %></td>
-            <td><%= partner.tag.name %></td>
+            <td><%= partner.tag.name unless partner.tag.nil? %></td>
             <td><% safe_concat "<a href='http://#{partner.website}'> #{partner.website} </a>" if partner.website %></td>
+            <td><%= partner.admin_users.first.email unless partner.admin_users.empty? %></td>
+            <td><%= partner.admin_users.first.roles.first.name unless partner.admin_users.empty? || partner.admin_users.first.roles.empty? %></td>
             <td><%= link_to 'Delete', admin_partner_path(partner), :confirm => 'Are you sure?', :method => :delete  %></td>
           </tr>
         <% end %>

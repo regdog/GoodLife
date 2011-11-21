@@ -1,4 +1,6 @@
 class Admin::TagsController < Admin::BaseController
+  load_and_authorize_resource
+
   respond_to :json, :only => [:feat_tag_tokens, :reward_tag_tokens]
 
   def index

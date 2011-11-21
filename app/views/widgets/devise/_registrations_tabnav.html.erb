@@ -11,7 +11,7 @@
 #   :generate_css => true|false #=> generates a default inline css for the tabnav, defaults to false
 #   :html => aHash #=> sets html options for the tabnav's div (es :html => {:class=> 'myCssClass', :id=>'myCssId'}) 
 #     
-render_tabnav :profile,
+render_tabnav :registrations,
               :generate_css => true do 
     
   # this generates a tab for every controller in your app
@@ -29,6 +29,7 @@ render_tabnav :profile,
     t.named 'User Profile'
     t.titled 'User Profile'
     t.links_to profile_path
+    t.highlights_on :controller=>'devise/registrations'
   end
 
   add_tab do |t|

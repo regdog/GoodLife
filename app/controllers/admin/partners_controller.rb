@@ -1,4 +1,7 @@
 class Admin::PartnersController < Admin::BaseController
+
+  load_and_authorize_resource
+
   def index
     @search = Partner.search(params[:search])
     if params[:type]
@@ -12,6 +15,8 @@ class Admin::PartnersController < Admin::BaseController
 
   def new
     @partner = Partner.new
+    @partner.admin_users.build
+    @roles = Role.where('name != ?', 'Admin')
     @partner.build_image
   end
 
@@ -26,14 +31,15 @@ class Admin::PartnersController < Admin::BaseController
   end
 
   def edit
-    #@partner = Partner.find(params[:id]).becomes(Partner)
     @partner = Partner.find(params[:id])
+    @roles = Role.where('name != ?', 'Admin')
+    @admin = @partner.admin_users.first
   end
 
   def update
     @partner = Partner.find(params[:id])
 
-    if @partner.update_attributes(params[:partner])
+    if @partner.update_attributes!(params[:partner])
        redirect_to :action => "index"
     else
        redirect_to :action => "edit"
@@ -45,5 +51,4 @@ class Admin::PartnersController < Admin::BaseController
     @partner.destroy
     redirect_to admin_partners_path
   end
-
 end

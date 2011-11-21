@@ -30,40 +30,61 @@ render_tabnav :feats,
     t.links_to :controller => "admin/dashboard"
   end
 
-  add_tab do |t|
-    t.named 'Feats'
-    t.links_to :controller => "admin/feats"
+  if can? :manage, Feat
+    add_tab do |t|
+      t.named 'Feats'
+      t.links_to :controller => "admin/feats"
+    end
   end
 
-  add_tab do |t|
-    t.named 'Challenges'
-    t.links_to :controller => "admin/challenges"
+  if can? :manage, Challenge
+    add_tab do |t|
+      t.named 'Challenges'
+      t.links_to :controller => "admin/challenges"
+    end
   end
 
-  add_tab do |t|
-    t.named 'Rewards'
-    t.links_to :controller => "admin/rewards"
+  if can? :manage, Reward
+    add_tab do |t|
+      t.named 'Rewards'
+      t.links_to :controller => "admin/rewards"
+    end
   end
 
+  if can? :manage, Partner
    add_tab do |t|
     t.named 'Partners'
     t.links_to :controller => "admin/partners"
    end
+  end
 
+  if can? :manage, Content
    add_tab do |t|
     t.named 'Content'
     t.links_to :controller => "admin/contents"
    end
+  end
 
+  if can? :manage, Tag
    add_tab do |t|
     t.named 'Tags'
     t.links_to :controller => "admin/tags"
    end
+  end
 
+  if can? :manage, User
    add_tab do |t|
    t.named 'Users'
    t.links_to :controller => "admin/users"
    end
+  end
+
+  if can? :manage, Role
+   add_tab do |t|
+     t.named 'Roles'
+     t.links_to :controller => 'admin/roles'
+   end
+  end
 
    #add_tab do |t|
    # t.named 'Settings'

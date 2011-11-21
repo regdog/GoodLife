@@ -40,6 +40,15 @@ ActiveRecord::Schema.define(:version => 20111115144647) do
   add_index "admin_users", ["email"], :name => "index_admin_users_on_email", :unique => true
   add_index "admin_users", ["reset_password_token"], :name => "index_admin_users_on_reset_password_token", :unique => true
 
+  create_table "assignments", :force => true do |t|
+    t.integer  "admin_user_id"
+    t.integer  "role_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "assignments", ["admin_user_id", "role_id"], :name => "index_assignments_on_admin_user_id_and_role_id", :unique => true
+
   create_table "authentications", :force => true do |t|
     t.integer  "user_id"
     t.string   "provider"
@@ -113,7 +122,7 @@ ActiveRecord::Schema.define(:version => 20111115144647) do
   create_table "feats", :force => true do |t|
     t.integer  "creator_id"
     t.string   "creator_type"
-    t.string   "name",          :limit => 100, :default => "",    :null => false
+    t.string   "name",          :limit => 100,                    :null => false
     t.text     "why"
     t.text     "how"
     t.integer  "bonus_points",  :limit => 3,   :default => 0
@@ -187,10 +196,10 @@ ActiveRecord::Schema.define(:version => 20111115144647) do
 
   create_table "rewards", :force => true do |t|
     t.integer  "partner_id"
-    t.string   "information",                                 :default => "", :null => false
-    t.text     "description",                                                 :null => false
-    t.string   "valid_term"
-    t.string   "disclaimer"
+    t.string   "name",                                                       :null => false
+    t.text     "information",                                                :null => false
+    t.string   "valid_term",                                                 :null => false
+    t.string   "disclaimer",                                                 :null => false
     t.integer  "redeem_points"
     t.decimal  "save_money",    :precision => 8, :scale => 2
     t.integer  "redeem_count",                                :default => 0
@@ -201,6 +210,12 @@ ActiveRecord::Schema.define(:version => 20111115144647) do
     t.string   "city"
     t.string   "street"
     t.string   "zipcode"
+  end
+
+  create_table "roles", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "sessions", :force => true do |t|
@@ -253,7 +268,7 @@ ActiveRecord::Schema.define(:version => 20111115144647) do
     t.string   "email",                                                               :default => "",  :null => false
     t.string   "encrypted_password",     :limit => 128,                               :default => ""
     t.string   "name"
-    t.integer  "category"
+    t.integer  "category",               :limit => 1,                                 :default => 0
     t.integer  "earned_points",          :limit => 8,                                 :default => 0
     t.decimal  "life_score",                            :precision => 2, :scale => 1, :default => 0.0
     t.string   "reset_password_token"
