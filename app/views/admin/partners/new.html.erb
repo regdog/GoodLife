@@ -63,27 +63,15 @@
           </p>
         <% end %>
       </div>
-        <%= f.fields_for :admin_users do |admin_user|%>
-          <p>
-            <%= admin_user.label "E-mail" %><br/>
-            <%= admin_user.email_field :email %>
-          </p>
-          <p>
-            <%= admin_user.label "Password" %><br/>
-            <%= admin_user.password_field :password %>
-          </p>
-          <p>
-            <%= admin_user.label "Password Confirmation" %><br/>
-            <%= admin_user.password_field :password_confirmation %>
-          </p>
-          <% @roles.each do |role|%>
-            <p>
-              <%= check_box_tag 'partner[admin_users_attributes][0][role_ids][]', role.id%>
-              <%=h role.name%>
-            </p>
-          <%end%>
-          <%= hidden_field_tag 'partner[admin_users_attributes][0][role_ids][]', '' %>
-        <%end%>
+      <% @partner.admin_users.each_with_index do |admin_user, index|%>
+        <%= f.fields_for :admin_users, admin_user do |builder|%>
+	      <div class="admin_user">
+		    <%= link_to_function "Remove", "remove_admin_user(this)"%>
+	        <%= render 'admin_user', :f => builder, :index => index, :admin_user => admin_user %>
+	      </div>
+	    <%end%>
+	    <%= link_to_function "Add", "add_admin_user"%>
+      <%end%> 
       <p><%= f.submit "Create" %></p>
     <% end %>
   </div>

@@ -15,9 +15,9 @@ class Admin::PartnersController < Admin::BaseController
 
   def new
     @partner = Partner.new
-    @partner.admin_users.build
-    @roles = Role.where('name != ?', 'Admin')
     @partner.build_image
+    2.times {@partner.admin_users.build}
+    @roles = Role.where('name != ?', 'Admin')
   end
 
   def create
@@ -33,7 +33,6 @@ class Admin::PartnersController < Admin::BaseController
   def edit
     @partner = Partner.find(params[:id])
     @roles = Role.where('name != ?', 'Admin')
-    @admin = @partner.admin_users.first
   end
 
   def update

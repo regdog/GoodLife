@@ -183,6 +183,11 @@ $(document).ready(function() {
 //    $(this).animate({ height: "20px" });
 //  });
 
-
 });
+
+function remove_admin_user(link) {
+	$(link).next("input[type=hidden]").val(true);
+	$(link).closest(".admin_user").toggle("slow");
+}
+
 

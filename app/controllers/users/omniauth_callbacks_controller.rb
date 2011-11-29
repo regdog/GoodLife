@@ -1,4 +1,4 @@
-class User::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   
   def handle_unverified_request
       true
