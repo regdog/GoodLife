@@ -75,12 +75,10 @@
       </div>
       <% @partner.admin_users.each_with_index do |admin_user, index|%>
         <%= f.fields_for :admin_users, admin_user do |builder|%>
-	        <div class="admin_user">
-		      <%= link_to_function "Remove", "remove_admin_user(this)"%>
-	          <%= render 'admin_user', :f => builder, :index => index, :admin_user=>admin_user %>
-	        </div>
+	       <%= render 'admin_user', :f => builder, :index => index, :admin_user=>admin_user %>
 	    <%end%>
       <%end%>
+      <%= link_to_add_admin_user "Add Partner Account", f, :admin_users%>
       <p><%= f.submit "Update" %></p>
     <% end %>
   </div>

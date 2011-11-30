@@ -16,7 +16,7 @@ class Admin::PartnersController < Admin::BaseController
   def new
     @partner = Partner.new
     @partner.build_image
-    2.times {@partner.admin_users.build}
+    @partner.admin_users.build
     @roles = Role.where('name != ?', 'Admin')
   end
 

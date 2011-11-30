@@ -186,8 +186,12 @@ $(document).ready(function() {
 });
 
 function remove_admin_user(link) {
-	$(link).next("input[type=hidden]").val(true);
+	$(link).prev("input[type=hidden]").val(true);
 	$(link).closest(".admin_user").toggle("slow");
 }
 
-
+function add_admin_user(link, association,content){
+	var new_index = new Date().getTime();
+	var regexp = new RegExp("new_" + association, "g")
+	$(link).before(content.replace(regexp, new_index));
+}
